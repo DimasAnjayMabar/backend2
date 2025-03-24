@@ -115,22 +115,16 @@ const verify = async(headers) => {
     return user
 }
 
-const logout = async(username) => {
-    username = validate(getUserValidation, username)
+const logout = async(headers) => {
+    const token = headers.authorization
 
-    const user = await prismaClient.user.findUnique({
-        where: {
-            username: username
-        }
-    })
-
-    if(!user){
-        throw new ResponseError(404, "user not found")
+    if(!token){
+        throw new ResponseError(401, "unauthorized")
     }
 
     return prismaClient.user.update({
         where: {
-            username: username
+            token: token
         },
         data: {
             token: null

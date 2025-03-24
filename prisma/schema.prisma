@@ -42,5 +42,69 @@ model UserHistory {
   @@index([userId])  // Index for quick lookups based on userId
 }
 
+model Distributor{
+  distributorId Int @id @default(autoincrement())
+  distributorName String 
+  distributorPhone String?
+  distributorEmail String? 
+  distributorEcommerceLink String? 
+  distributorProfilePicture String?
+  history DistributorHistory []
+  isDistributorDeleted Boolean @default(false)
+  isDistributorActive Boolean @default(true)
+
+  @@map("distributor")
+  @@index([distributorId])
+  Warehouse Warehouse[]
+}
+
+model DistributorHistory{
+  distributorHistoryId Int @id @default(autoincrement())
+  updatedAt DateTime? @default(now())
+  description String?
+  distributorId Int
+  distributor Distributor @relation(fields: [distributorId], references: [distributorId], onDelete: Cascade)
+
+  @@map("distributor_history")
+  @@index([distributorHistoryId])
+}
+
+model Category{
+  categoryId Int @id @default(autoincrement())
+  categoryName String
+  @@map("category")
+  @@index([categoryId])
+
+  Warehouse Warehouse[]
+}
+
+model Warehouse{
+  productId Int @id @default(autoincrement())
+  dateAdded DateTime? @default(now())
+  distributorId Int
+  distributor Distributor @relation(fields: [distributorId], references: [distributorId])
+  productName String 
+  productPrice Decimal 
+  percentProfit Decimal
+  productStock Int
+  categoryId Int
+  category Category @relation(fields: [categoryId], references: [categoryId])
+
+  WarehouseHistory WarehouseHistory[]
+
+  @@map("warehouse")
+  @@index([productId])
+}
+
+model WarehouseHistory{
+  warehouseHistoryId Int @id @default(autoincrement())
+  updatedAt DateTime? @default(now())
+  description String?
+  productId Int
+  product Warehouse @relation(fields: [productId], references: [productId])
+  @@map("warehouse_history")
+  @@index([warehouseHistoryId])
+}
+
 
 

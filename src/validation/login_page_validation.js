@@ -16,6 +16,11 @@ const loginUserValidation = Joi.object({
 
 const getUserValidation = Joi.string().required()
 
+const getUserValidation2 = Joi.object({
+    token: Joi.string().required()
+});
+
+
 export{
-    loginUserValidation, registerUserValidation, getUserValidation
+    loginUserValidation, registerUserValidation, getUserValidation, getUserValidation2
 }

@@ -49,7 +49,7 @@ const verify = async (req, res, next) => {
 
 const logout = async(req, res, next) => {
     try{
-        await userService.logout(req.user.username)
+        await userService.logout(req.headers)
         res.status(200).json({
             data: "Logged out successfully"
         })
