@@ -21,7 +21,9 @@ const deleteDistributor = async (req) => {
     }
 
     const {distributorId} = req.params;
+
     const id = Number(distributorId);
+    
     if (isNaN(id)) {
         throw new ResponseError(400, "Invalid distributor ID");
     }

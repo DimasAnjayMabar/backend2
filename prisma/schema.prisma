@@ -56,6 +56,7 @@ model Distributor{
   @@map("distributor")
   @@index([distributorId])
   Warehouse Warehouse[]
+  Transaction Transaction[]
 }
 
 model DistributorHistory{
@@ -84,8 +85,9 @@ model Warehouse{
   distributorId Int
   distributor Distributor @relation(fields: [distributorId], references: [distributorId])
   productName String 
-  productPrice Decimal 
+  productStockPrice Decimal 
   percentProfit Decimal
+  productSellPrice Decimal
   productStock Int
   categoryId Int
   category Category @relation(fields: [categoryId], references: [categoryId])
@@ -94,6 +96,7 @@ model Warehouse{
 
   @@map("warehouse")
   @@index([productId])
+  TransactionDetail TransactionDetail[]
 }
 
 model WarehouseHistory{
@@ -104,6 +107,77 @@ model WarehouseHistory{
   product Warehouse @relation(fields: [productId], references: [productId])
   @@map("warehouse_history")
   @@index([warehouseHistoryId])
+}
+
+model Transaction{
+  transactionId Int @id @default(autoincrement())
+  transactionCode String @unique // {BUY / SELL} - {DATE} - {TIME} - {TRANSACTION ID}
+  transactionDate DateTime? @default(now())
+  distributorId Int?
+  distributor Distributor? @relation(fields: [distributorId], references: [distributorId])
+  transactionType String? // BUY OR SELL
+  transactionTotal Decimal?
+  discountId Int?
+  discount Discount? @relation(fields: [discountId], references: [discountId])
+  transactionStatus String? //PAID OR DEBT OR RECEIVABLE
+  customerId Int?
+  customer Customer? @relation(fields: [customerId], references: [customerId])
+  @@map("transaction")
+  @@index([transactionId])
+  TransactionDetail TransactionDetail[]
+  TransactionHistory TransactionHistory[]
+}
+
+model TransactionHistory{
+  transactionHistoryId Int @id @default(autoincrement())
+  transactionId Int
+  transaction Transaction @relation(fields: [transactionId], references: [transactionId])
+  description String?
+  dateUpdated DateTime? @default(now())
+  @@map("transaction_history")
+  @@index([transactionHistoryId])
+}
+
+model TransactionDetail{
+  detailTransactionId Int @id @default(autoincrement())
+  transactionId Int
+  transaction Transaction @relation(fields: [transactionId], references: [transactionId])
+  productId Int
+  warehouse Warehouse @relation(fields: [productId], references: [productId])
+  subtotal Decimal?
+  @@map("transaction_detail")
+  @@index([detailTransactionId])
+  TransactionDetailHistory TransactionDetailHistory[]
+}
+
+model TransactionDetailHistory{
+  transactionDetailHistoryId Int @id @default(autoincrement())
+  transactionDetailId Int
+  transactionDetail TransactionDetail @relation(fields: [transactionDetailId], references: [detailTransactionId])
+  description String?
+  dateUpdated DateTime? @default(now())
+  @@map("transaction_detail_history")
+  @@index([transactionDetailHistoryId])
+}
+
+model Discount{
+  discountId Int @id @default(autoincrement())
+  discountName String?
+  percentage Decimal?
+  @@map("discount")
+  @@index([discountId])
+  Transaction Transaction[]
+}
+
+model Customer{
+  customerId Int @id @default(autoincrement())
+  customerName String?
+  customerEmail String?
+  customerPhone String?
+  customerNIK String?
+  @@map("customer")
+  @@index([customerId])
+  Transaction Transaction[]
 }
 
 
